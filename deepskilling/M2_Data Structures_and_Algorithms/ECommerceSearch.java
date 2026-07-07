@@ -1,67 +1,87 @@
-import java.util.Arrays;
-import java.util.Comparator;
+using System;
 
-public class ECommerceSearch {
-    static class Product {
-        String productId;
-        String productName;
-        String category;
+public class ECommerceSearch
+{
+    public class Product
+    {
+        public string ProductId { get; set; }
+        public string ProductName { get; set; }
+        public string Category { get; set; }
 
-        Product(String productId, String productName, String category) {
-            this.productId = productId;
-            this.productName = productName;
-            this.category = category;
+        public Product(string productId, string productName, string category)
+        {
+            ProductId = productId;
+            ProductName = productName;
+            Category = category;
         }
 
-        @Override
-        public String toString() {
-            return String.format("Product{id=%s, name=%s, category=%s}", productId, productName, category);
+        public override string ToString()
+        {
+            return $"Product{{id={ProductId}, name={ProductName}, category={Category}}}";
         }
     }
 
-    public static Product linearSearch(Product[] products, String searchName) {
-        for (Product product : products) {
-            if (product.productName.equalsIgnoreCase(searchName)) {
+    public static Product LinearSearch(Product[] products, string searchName)
+    {
+        foreach (Product product in products)
+        {
+            if (string.Equals(product.ProductName, searchName, StringComparison.OrdinalIgnoreCase))
+            {
                 return product;
             }
         }
         return null;
     }
 
-    public static Product binarySearch(Product[] sortedProducts, String searchName) {
+    public static Product BinarySearch(Product[] sortedProducts, string searchName)
+    {
         int left = 0;
-        int right = sortedProducts.length - 1;
+        int right = sortedProducts.Length - 1;
 
-        while (left <= right) {
-            int mid = (left + right) / 2;
-            int compare = sortedProducts[mid].productName.compareToIgnoreCase(searchName);
-            if (compare == 0) {
+        while (left <= right)
+        {
+            int mid = left + (right - left) / 2;
+            int compare = string.Compare(sortedProducts[mid].ProductName, searchName, StringComparison.OrdinalIgnoreCase);
+
+            if (compare == 0)
+            {
                 return sortedProducts[mid];
             }
-            if (compare < 0) {
+            if (compare < 0)
+            {
                 left = mid + 1;
-            } else {
+            }
+            else
+            {
                 right = mid - 1;
             }
         }
         return null;
     }
 
-    public static void main(String[] args) {
-        Product[] products = {
-                new Product("P001", "Sneakers", "Footwear"),
-                new Product("P002", "Backpack", "Accessories"),
-                new Product("P003", "Headphones", "Electronics"),
-                new Product("P004", "Watch", "Accessories")
+    public static void Main(string[] args)
+    {
+        Product[] products = new Product[]
+        {
+            new Product("P001", "Sneakers", "Footwear"),
+            new Product("P002", "Backpack", "Accessories"),
+            new Product("P003", "Headphones", "Electronics"),
+            new Product("P004", "Watch", "Accessories")
         };
 
-        System.out.println("Linear search for Headphones:");
-        System.out.println(linearSearch(products, "Headphones"));
+        Console.WriteLine("Linear search for Headphones:");
+        Product linearResult = LinearSearch(products, "Headphones");
+        Console.WriteLine(linearResult != null ? linearResult.ToString() : "Not Found");
 
-        Product[] sortedProducts = Arrays.copyOf(products, products.length);
-        Arrays.sort(sortedProducts, Comparator.comparing(p -> p.productName.toLowerCase()));
+        // Create a copy of the array and sort it
+        Product[] sortedProducts = new Product[products.Length];
+        Array.Copy(products, sortedProducts, products.Length);
+        
+        // Sorting alphabetically by product name (case-insensitive)
+        Array.Sort(sortedProducts, (p1, p2) => string.Compare(p1.ProductName, p2.ProductName, StringComparison.OrdinalIgnoreCase));
 
-        System.out.println("\nBinary search for Watch:");
-        System.out.println(binarySearch(sortedProducts, "Watch"));
+        Console.WriteLine("\nBinary search for Watch:");
+        Product binaryResult = BinarySearch(sortedProducts, "Watch");
+        Console.WriteLine(binaryResult != null ? binaryResult.ToString() : "Not Found");
     }
 }
